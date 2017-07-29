@@ -1,0 +1,58 @@
+grammar uk.ac.lancaster.odin.lang.BSPL with org.eclipse.xtext.common.Terminals
+
+generate bSPL "http://www.ac.uk/lancaster/odin/lang/BSPL"
+
+BSPL :
+    protocol=Protocol;
+  
+Protocol :
+	name=ID '{' roles=RoleList parameters=ParameterList references=ReferenceList '}'
+;
+
+RoleList :
+	'role' roleList+=Role (',' roleList+=Role)+
+;
+
+Role :
+	name=ID
+;
+
+ParameterList :
+	'parameter' parameterList+=Parameter (',' parameterList+=Parameter)*
+;
+
+Parameter :
+	(adornment=Adornment)? name=ID (key?='key')?
+;
+
+ReferenceList :
+	(referenceList+=Reference)+
+;
+
+Reference :
+	ProtocolReference | MessageReference
+;
+
+ProtocolReference :
+	name=ID '(' protocolReferenceRoles=ProtocolReferenceRoleList ';' parameters=ReferenceParameterList ')'
+;
+
+MessageReference :
+	sender=[Role] '->' receiver=[Role] ':' name=ID '[' parameters=ReferenceParameterList ']'
+;
+
+ProtocolReferenceRoleList :
+	roleList+=Role (',' roleList+=Role)+
+;
+
+ReferenceParameterList :
+	referenceParameterList+=ReferenceParameter (',' referenceParameterList+=ReferenceParameter)*
+;
+
+ReferenceParameter :
+	(adornment=Adornment)? name=ID
+;
+
+Adornment :
+	'in' | 'out' | 'nil'
+;
